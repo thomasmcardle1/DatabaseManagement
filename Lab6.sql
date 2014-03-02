@@ -1,18 +1,15 @@
 ﻿----Q1
 
-select c.name,
-	c.city
+select c.name, c.city
 from customers c
-where c.city IN (
-	select p.city
-	from products p
-	group by p.city
-	having sum(p.quantity) > 1
-	order by sum(p.quantity) desc
+	left join products p on c.city = p.city
+	group by c.name, p.pid, c.city
+	having max(p.quantity) > 0
+	order by max(p.quantity) desc
 	limit 1
-	)
-
+	
 ---Q2
+
 select c.name,
 	c.city
 from customers c
@@ -53,7 +50,7 @@ order by sum(orders.dollars) desc
 
 --Q6
 
-select customers.name AS CUSTOMER_NAME, products.name AS PRODUCTS_NAME
+select customers.name AS CUSTOMER_NAME, products.name AS PRODUCTS_NAME, agents.name AS AGENTS_NAME
 from agents, customers, products, orders
 where agents.city = 'New York'
 	AND orders.aid = agents.aid
