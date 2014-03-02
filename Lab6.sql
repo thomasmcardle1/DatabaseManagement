@@ -41,12 +41,13 @@ order by orders.dollars desc
 
 --Q5
 
-select customers.name, sum(orders.dollars)
-from customers
-inner join orders
-	on customers.cid = orders.cid
-group by customers.name
-order by sum(orders.dollars) desc
+select c.name, coalesce(sum(o.dollars),0)
+from customers c
+left outer join orders o
+	on c.cid = o.cid
+group by c.name
+order by sum(o.dollars) desc
+
 
 --Q6
 
