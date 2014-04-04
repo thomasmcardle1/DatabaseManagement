@@ -94,6 +94,9 @@ INSERT INTO persons(name, address, DOB)
 INSERT INTO persons(name, address, DOB)
   VALUES ('Brian De Palma','Newark, New Jersey, United States', '9/11/1940');
 
+INSERT INTO persons(name, address, DOB)
+  VALUES ('Terence Young','Shanghai, China', '6/20/1915');
+
   
 -- Insert Actors --
 INSERT INTO actors (aid, haircolor, eyecolor, heightINCH, weightLBS, actorGuildAnivDate)
@@ -156,8 +159,14 @@ INSERT INTO directors (did, filmschool, directorguildanivdate)
 		from persons
 		where persons.name = 'Brian De Palma'),'CIA', '10/22/1980' );
 
+INSERT INTO directors (did, filmschool, directorguildanivdate)
+	VALUES ((select pid
+		from persons
+		where persons.name = 'Terence Young'),'Cambridge', '3/6/1940' );
+
+		
 ----------------------------------------------------------------------------------------------------------------------
---Insert Movies--	
+--Insert Movies--
 INSERT INTO movies (moviename, releaseyear, domesticsalesUSD, foreignsalesUSD, dvdblueraysalesUSD)
 	VALUES ('Fight Club','1999','20000000','15000000','1000000');
 
@@ -234,7 +243,7 @@ INSERT INTO moviecast (aid, mid)
 		from movies
 		where moviename = 'Untouchables'));
 
-
+		
 -- Insert Movie Crew --
 
 INSERT INTO moviecrew (did, mid)
@@ -294,4 +303,32 @@ INSERT INTO moviecrew (did, mid)
 		from movies
 		where moviename = '2Guns'));
 
-select * from movies;
+INSERT INTO moviecrew (did, mid)
+	VALUES ((select pid
+		from persons
+		where name = 'Terence Young'),
+		(select mid
+		from movies
+		where moviename = 'James Bond: From Russia With Love'));
+
+							
+
+				
+SELECT DISTINCT persons.name as Director 
+FROM 	persons,
+ 	movies,
+ 	directors,
+ 	moviecrew
+ WHERE moviecrew.did = directors.did 
+	AND movies.mid = moviecrew.mid 
+	AND directors.did = persons.pid 
+	AND moviecrew.mid IN (SELECT movies.mid 
+				FROM	persons,
+					actors,
+					movies,
+					moviecast 
+				WHERE persons.pid = actors.aid 
+					AND movies.mid = moviecast.mid 
+					AND actors.aid = moviecast.aid 
+					AND persons.name = 'Sean Connery' 
+					);
